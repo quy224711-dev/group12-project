@@ -7,11 +7,12 @@ function AddUser() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:3000/users", newUser);
-      alert("Thêm user thành công!");
+      await axios.post("http://localhost:3001/users", newUser);
+      alert("✅ Thêm user thành công!");
       setNewUser({ name: "", email: "" });
+      window.location.reload(); // Tải lại danh sách sau khi thêm
     } catch (error) {
-      alert("Lỗi khi thêm user!");
+      alert("❌ Lỗi khi thêm user!");
       console.error(error);
     }
   };
