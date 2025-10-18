@@ -1,12 +1,12 @@
 import React from "react";
 import UserList from "./components/UserList";
-import AddUser from "./components/AddUser";
+// Không cần import AddUser ở đây nữa
 
 function App() {
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Quản lý người dùng</h1>
-      <AddUser />
+    <div style={{ padding: "20px", maxWidth: "600px", margin: "0 auto", fontFamily: "sans-serif" }}>
+      <h1 style={{ textAlign: "center", color: "#007bff" }}>Quản lý người dùng</h1>
+      {/* <AddUser /> Xóa dòng này đi */}
       <hr />
       <UserList />
     </div>

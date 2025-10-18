@@ -1,15 +1,20 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const userRoutes = require('./routes/user');
+
+dotenv.config();
 const app = express();
 
-// Import routes
-const userRoutes = require('./routes/user');  // ✅ Đúng đường dẫn
-
-// Middleware để đọc JSON từ request body
 app.use(express.json());
 
-// Gắn router
-app.use('/', userRoutes);  // ✅ Cho phép truy cập /users
+// ✅ Kết nối MongoDB
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB kết nối thành công "))
+  .catch(err => console.error("❌ MongoDB kết nối bị lỗi", err));
 
-// Cổng chạy server
+// Sử dụng routes
+app.use('/', userRoutes);
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
