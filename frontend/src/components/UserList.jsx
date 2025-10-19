@@ -44,6 +44,7 @@ function UserList() {
     try {
       // 👇 SỬA LẠI ĐƯỜNG DẪN Ở ĐÂY
       await axios.put(`http://localhost:5000/users/${editingUser._id}`, updatedData);
+      
       fetchUsers();
       setEditingUser(null);
       alert("✅ Cập nhật user thành công!");
