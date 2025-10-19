@@ -9,6 +9,7 @@ function UserList() {
 
   const fetchUsers = async () => {
     try {
+      // 👇 SỬA LẠI ĐƯỜNG DẪN Ở ĐÂY
       const res = await axios.get("http://localhost:5000/users");
       setUsers(res.data);
     } catch (err) {
@@ -23,7 +24,8 @@ function UserList() {
   const handleDelete = async (id) => {
     if (!window.confirm("Bạn có chắc muốn xóa người dùng này?")) return;
     try {
-     await axios.delete(`http://localhost:5000/users/${id}`);
+      // 👇 SỬA LẠI ĐƯỜNG DẪN Ở ĐÂY
+      await axios.delete(`http://localhost:5000/users/${id}`);
       fetchUsers();
       alert("🗑️ Xóa user thành công!");
     } catch (error) {
@@ -40,8 +42,8 @@ function UserList() {
   const handleUpdate = async () => {
     if (!editingUser) return;
     try {
+      // 👇 SỬA LẠI ĐƯỜNG DẪN Ở ĐÂY
       await axios.put(`http://localhost:5000/users/${editingUser._id}`, updatedData);
-      fetchUsers();
       fetchUsers();
       setEditingUser(null);
       alert("✅ Cập nhật user thành công!");
@@ -61,17 +63,8 @@ function UserList() {
             <li key={user._id}>
               {editingUser?._id === user._id ? (
                 <>
-                  <input
-                    type="text"
-                    value={updatedData.name}
-                    onChange={(e) => setUpdatedData({ ...updatedData, name: e.target.value })}
-                  />
-                  <input
-                    type="email"
-                    style={{ marginLeft: '10px', flexGrow: 2 }}
-                    value={updatedData.email}
-                    onChange={(e) => setUpdatedData({ ...updatedData, email: e.target.value })}
-                  />
+                  <input type="text" value={updatedData.name} onChange={(e) => setUpdatedData({ ...updatedData, name: e.target.value })}/>
+                  <input type="email" style={{ marginLeft: '10px', flexGrow: 2 }} value={updatedData.email} onChange={(e) => setUpdatedData({ ...updatedData, email: e.target.value })}/>
                   <button onClick={handleUpdate} className="btn-save">Lưu</button>
                   <button onClick={() => setEditingUser(null)} className="btn-cancel">Hủy</button>
                 </>
