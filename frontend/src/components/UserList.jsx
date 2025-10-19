@@ -9,7 +9,6 @@ function UserList() {
 
   const fetchUsers = async () => {
     try {
-      // 👇 SỬA LẠI ĐƯỜNG DẪN Ở ĐÂY
       const res = await axios.get("http://localhost:5000/users");
       setUsers(res.data);
     } catch (err) {
@@ -24,7 +23,6 @@ function UserList() {
   const handleDelete = async (id) => {
     if (!window.confirm("Bạn có chắc muốn xóa người dùng này?")) return;
     try {
-      // 👇 SỬA LẠI ĐƯỜNG DẪN Ở ĐÂY
       await axios.delete(`http://localhost:5000/users/${id}`);
       fetchUsers();
       alert("🗑️ Xóa user thành công!");
@@ -42,9 +40,7 @@ function UserList() {
   const handleUpdate = async () => {
     if (!editingUser) return;
     try {
-      // 👇 SỬA LẠI ĐƯỜNG DẪN Ở ĐÂY
       await axios.put(`http://localhost:5000/users/${editingUser._id}`, updatedData);
-      
       fetchUsers();
       setEditingUser(null);
       alert("✅ Cập nhật user thành công!");
@@ -59,28 +55,65 @@ function UserList() {
       <AddUser onUserAdded={fetchUsers} />
       <div className="card">
         <h2>Danh sách người dùng</h2>
-        <ul>
-          {users.map((user) => (
-            <li key={user._id}>
-              {editingUser?._id === user._id ? (
-                <>
-                  <input type="text" value={updatedData.name} onChange={(e) => setUpdatedData({ ...updatedData, name: e.target.value })}/>
-                  <input type="email" style={{ marginLeft: '10px', flexGrow: 2 }} value={updatedData.email} onChange={(e) => setUpdatedData({ ...updatedData, email: e.target.value })}/>
-                  <button onClick={handleUpdate} className="btn-save">Lưu</button>
-                  <button onClick={() => setEditingUser(null)} className="btn-cancel">Hủy</button>
-                </>
-              ) : (
-                <>
-                  <div className="user-info">
-                    <strong>{user.name}</strong> - <span>{user.email}</span>
-                  </div>
-                  <button onClick={() => handleEdit(user)} className="btn-edit">Sửa</button>
-                  <button onClick={() => handleDelete(user._id)} className="btn-delete">Xóa</button>
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
+        <table className="user-table">
+          <thead>
+            <tr>
+              {/* 👇 Thêm cột STT */}
+              <th>STT</th>
+              <th>Tên</th>
+              <th>Email</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            {/* 👇 Thêm 'index' vào hàm map */}
+            {users.map((user, index) => (
+              <tr key={user._id}>
+                {editingUser?._id === user._id ? (
+                  <>
+                    {/* 👇 Thêm một ô trống cho STT khi đang sửa */}
+                    <td>{index + 1}</td>
+                    <td>
+                      <input
+                        type="text"
+                        className="edit-input"
+                        value={updatedData.name}
+                        onChange={(e) => setUpdatedData({ ...updatedData, name: e.target.value })}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="email"
+                        className="edit-input"
+                        value={updatedData.email}
+                        onChange={(e) => setUpdatedData({ ...updatedData, email: e.target.value })}
+                      />
+                    </td>
+                    <td>
+                      <div className="action-buttons">
+                        <button onClick={handleUpdate} className="btn-save">Lưu</button>
+                        <button onClick={() => setEditingUser(null)} className="btn-cancel">Hủy</button>
+                      </div>
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    {/* 👇 Hiển thị số thứ tự */}
+                    <td>{index + 1}</td>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>
+                      <div className="action-buttons">
+                        <button onClick={() => handleEdit(user)} className="btn-edit">Sửa</button>
+                        <button onClick={() => handleDelete(user._id)} className="btn-delete">Xóa</button>
+                      </div>
+                    </td>
+                  </>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );
