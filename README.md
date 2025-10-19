@@ -40,7 +40,7 @@ Dự án này là ứng dụng Web quản lý người dùng (CRUD) được ph�
 ### 1️⃣ Clone repo:
 
 ```bash
-git clone https://github.com/yourusername/group12-project.git
+git clone https://github.com/quy224711-dev/group12-project.git
 cd group12-project
 
 ```
