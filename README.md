@@ -22,3 +22,25 @@
 ## Vai trò
 
 - Phụ trách: Backend (Node.js + Express)
+
+# 🌐 Group12 Project - Web Quản lý Người dùng
+
+## 🧩 Giới thiệu
+
+Dự án này là ứng dụng Web quản lý người dùng (CRUD) được phát triển bằng **Node.js**, **Express**, **MongoDB**, và **ReactJS**.
+
+## ⚙️ Công nghệ sử dụng
+
+- Frontend: ReactJS
+- Backend: Node.js + Express
+- Database: MongoDB Atlas
+
+## 🚀 Hướng dẫn chạy dự án
+
+### 1️⃣ Clone repo:
+
+```bash
+git clone https://github.com/yourusername/group12-project.git
+cd group12-project
+
+```
