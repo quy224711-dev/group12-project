@@ -1,0 +1,186 @@
+/* --- NEW: Modern & Bright Background --- */
+body {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background-attachment: fixed;
+  font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  color: #334155; /* Darker slate for better readability */
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 2rem auto;
+}
+
+h1 {
+  color: #1e3a8a; /* Deeper blue for contrast */
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+h2 {
+  color: #1e293b; /* Dark charcoal */
+  border-bottom: 2px solid #e2e8f0; /* Lighter border */
+  padding-bottom: 0.75rem;
+  margin-top: 2rem;
+  font-size: 1.75rem;
+}
+
+/* --- NEW: Refined Card Style --- */
+.card {
+  background-color: rgba(255, 255, 255, 0.85); /* Slightly transparent white */
+  backdrop-filter: blur(10px); /* Frosted glass effect */
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 30, 80, 0.12);
+  padding: 30px;
+  margin-bottom: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* --- Form & Inputs --- */
+form {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+form input, .edit-input {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #f8fafc;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+form input:focus, .edit-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* --- NEW: Brighter Button Colors --- */
+button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+button:hover:not(:disabled) {
+  transform: translateY(-2px); /* Add a subtle lift effect */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+button:disabled {
+  background-color: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Submit button in the form */
+form button { background-color: #2563eb; color: white; }
+form button:hover:not(:disabled) { background-color: #1d4ed8; }
+
+/* Action buttons in the table */
+.btn-edit { background-color: #475569; color: white; }
+.btn-edit:hover { background-color: #334155; }
+
+.btn-delete { background-color: #dc2626; color: white; }
+.btn-delete:hover { background-color: #b91c1c; }
+
+.btn-save { background-color: #16a34a; color: white; }
+.btn-save:hover { background-color: #15803d; }
+
+.btn-cancel { background-color: #f59e0b; color: white; }
+.btn-cancel:hover { background-color: #d97706; }
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+/* --- Table Styles --- */
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.user-table th, .user-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.user-table thead th {
+  background-color: transparent;
+  color: #475569;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.user-table tbody tr {
+  transition: background-color 0.15s ease-in-out;
+}
+.user-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* --- Validation Error Message --- */
+.error-message {
+  color: #dc2626;
+  font-size: 14px;
+  margin-top: 5px;
+  padding-left: 5px;
+}
+/* --- Table Styles --- */
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.user-table th, .user-table td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle; /* Căn giữa theo chiều dọc */
+}
+
+/* 👇 Thêm đoạn này để cột STT và Hành động gọn gàng hơn */
+.user-table th:first-child, .user-table td:first-child {
+  text-align: center;
+  width: 1%; /* Cho cột STT chiếm độ rộng tối thiểu */
+}
+.user-table th:last-child, .user-table td:last-child {
+  text-align: center;
+  width: 1%;
+  white-space: nowrap; /* Ngăn các nút bị xuống dòng */
+}
+/* 👇 (Kết thúc đoạn thêm) */
+
+
+.user-table thead th {
+  background-color: transparent;
+  color: #475569;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+.user-table tbody tr {
+  transition: background-color 0.15s ease-in-out;
+}
+.user-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.7);
+}
