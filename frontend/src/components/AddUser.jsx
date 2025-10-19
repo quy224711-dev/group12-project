@@ -29,7 +29,7 @@ function AddUser({ onUserAdded }) {
     setIsLoading(true);
     setErrors({}); // Xóa lỗi cũ
     try {
-      await axios.post("/users", newUser);
+      await axios.post("http://localhost:5000/users", newUser);
       alert("✅ Thêm user thành công!");
       setNewUser({ name: "", email: "" });
       if (onUserAdded) onUserAdded();
