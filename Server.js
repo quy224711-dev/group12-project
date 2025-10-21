@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const User = require("./models/User"); // 📂 đường dẫn đến model User
+const User = require("./User");
 
 const app = express();
 app.use(express.json());
