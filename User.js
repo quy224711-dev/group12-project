@@ -1,36 +1,37 @@
+// 📁 models/User.js
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 // 🔹 Định nghĩa schema người dùng
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Tên không được để trống"],
+    },
+    email: {
+      type: String,
+      required: [true, "Email là bắt buộc"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: [true, "Mật khẩu là bắt buộc"],
+      minlength: [6, "Mật khẩu phải có ít nhất 6 ký tự"],
+      select: false, // Không trả password khi query user
+    },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true, // kiểm tra trùng email
-    lowercase: true,
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 6, // yêu cầu tối thiểu 6 ký tự
-  },
-  role: {
-    type: String,
-    enum: ["admin", "manager", "user"], // các vai trò hệ thống
-    default: "user",
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { timestamps: true }
+);
 
-// 🔹 Tự động mã hóa mật khẩu trước khi lưu
+// 🔹 Mã hóa mật khẩu trước khi lưu
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   const salt = await bcrypt.genSalt(10);
@@ -38,9 +39,10 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// 🔹 Hàm so sánh mật khẩu khi login
+// 🔹 Hàm so sánh mật khẩu khi đăng nhập
 userSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
+// 🔹 Xuất model ra để sử dụng
 module.exports = mongoose.model("User", userSchema);
