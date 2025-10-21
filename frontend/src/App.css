@@ -15,7 +15,7 @@
 
 /* --- Global Styles --- */
 body {
- margin: 0;
+  margin: 0;
   font-family: 'Inter', sans-serif;
   background: linear-gradient(135deg, #f5eefc 0%, #e6e6fa 100%);
   background-attachment: fixed;
@@ -31,13 +31,14 @@ body {
 main {
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 50px 0;
+  /* align-items: center; */ /* <-- Vô hiệu hóa hoặc xóa dòng này */
+  padding: 40px 0; /* Tăng padding trên để đẩy form xuống một chút */
+  min-height: calc(100vh - 150px);
 }
 
 /* --- Navigation Bar --- */
 nav {
-  background-color: var(--white-color);
+  background-color:  #EBF5FF;
   padding: 1rem 2.5rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
   border-radius: 12px;
@@ -56,7 +57,6 @@ nav a {
   transition: all 0.3s ease;
 }
 
-/* HIỆU ỨNG NÚT ACTIVE */
 nav a.active {
   background-color: var(--primary-blue);
   color: var(--white-color);
@@ -74,82 +74,51 @@ nav a:not(.active):hover {
   align-items: center;
 }
 
-.btn-logout {
-  background-color: transparent;
-  color: var(--danger-red);
-  border: 1px solid var(--danger-red);
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.btn-logout:hover {
-  background-color: var(--danger-red);
-  color: var(--white-color);
-}
-
-/* --- Card & Form Styles --- */
-.card {
-  background-color: var(--white-color);
+/* --- Card & Form Styles cho Đăng nhập/Đăng ký --- */
+.auth-card {
+background-color: #EBF5FF; 
   border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 50px;
   width: 100%;
-  max-width: 420px;
+  max-width: 600px; /* <-- Giảm chiều rộng một chút cho cân đối */
+  /* min-height: 400px; */ /* <-- Vô hiệu hóa hoặc xóa dòng này */
   text-align: center;
   border: 1px solid var(--border-color);
+  transition: max-width 0.5s ease-in-out, padding 0.5s ease-in-out;
 }
 
-.card h2 {
+
+
+.auth-card h2 {
   margin-top: 0;
   margin-bottom: 30px;
   font-weight: 700;
   font-size: 1.8rem;
 }
-/* --- Style riêng cho khung Trang chủ --- */
-.home-card {
-  text-align: left; /* Căn lề trái cho chuyên nghiệp */
-  background-color: var(--white-color);
-  border: 1px solid var(--primary-blue); /* Thêm viền màu xanh chính */
-  box-shadow: 0 10px 30px rgba(74, 144, 226, 0.15); /* Bóng đổ nổi bật hơn */
-}
 
-.home-card h2 {
-  color: var(--primary-blue-dark); /* Màu chữ đậm hơn */
-  font-size: 2rem;
-}
-
-.home-card p {
-  color: var(--text-light);
-  font-size: 1.1rem;
-  line-height: 1.7;
-}
-
-form {
+.auth-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-form input {
+.auth-form input {
   padding: 16px;
   border: 1px solid var(--border-color);
   border-radius: 10px;
   font-size: 1rem;
-  background-color: var(--background-light);
+  background-color: #FFF; /* Nền trắng cho ô input */
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-form input:focus {
+.auth-form input:focus {
   outline: none;
   border-color: var(--primary-blue);
   box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
 }
 
-.btn-submit {
+.auth-button {
   padding: 16px;
   border: none;
   border-radius: 10px;
@@ -162,18 +131,51 @@ form input:focus {
   box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
 }
 
-.btn-submit:hover {
+.auth-button:hover {
   background-color: var(--primary-blue-dark);
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(74, 144, 226, 0.4);
 }
 
-.error-message {
-  color: #c0392b;
-  background-color: #ffe0e0;
-  border: 1px solid #f9d4d4;
-  margin-top: 18px;
-  padding: 12px;
+/* --- Khung thông báo và JWT --- */
+.message-box {
+  margin-top: 20px;
+  padding: 15px;
   border-radius: 8px;
   font-weight: 500;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.message-box.success {
+  background-color: #e6f7e9;
+  border: 1px solid #c7e8cd;
+  color: #2b784c;
+}
+
+.message-box.error {
+  background-color: #fbe9e7;
+  border: 1px solid #ffccbc;
+  color: #c63737;
+}
+
+.jwt-token-box {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: var(--text-dark);
+  color: var(--success-green);
+  text-align: left;
+  word-wrap: break-word;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+  border: 1px solid #4a4a4a;
+}
+
+.jwt-token-box strong {
+  color: var(--white-color);
+  display: block;
+  margin-bottom: 8px;
 }
