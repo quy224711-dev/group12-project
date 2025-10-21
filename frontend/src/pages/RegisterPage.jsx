@@ -1,58 +1,60 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import './App.css';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-// Component cho thanh điều hướng
-function Navigation() {
+function RegisterPage() {
+  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
-  const token = localStorage.getItem('authToken');
 
-  const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    navigate('/login');
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:5000/api/auth/signup', formData);
+      setMessage(response.data.message);
+      // Đợi 2 giây rồi chuyển hướng sang trang đăng nhập
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+    } catch (error) {
+      setMessage(error.response.data.message || 'Có lỗi xảy ra!');
+    }
   };
 
   return (
-    <nav>
-      <Link to="/">Trang chủ</Link>
-      <div className="nav-links">
-        {token ? (
-          <button onClick={handleLogout} className="btn-logout">Đăng xuất</button>
-        ) : (
-          <>
-            <Link to="/login">Đăng nhập</Link>
-            <Link to="/register">Đăng ký</Link>
-          </>
-        )}
-      </div>
-    </nav>
+    <div className="card">
+      <h2>Tạo tài khoản mới</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          name="name"
+          placeholder="Tên của bạn"
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Mật khẩu"
+          onChange={handleChange}
+          required
+        />
+        <button type="submit" className="btn-submit">Đăng ký</button>
+      </form>
+      {message && <p className="message">{message}</p>}
+    </div>
   );
 }
 
-// Component Trang chủ đơn giản
-function HomePage() {
-  return <h2>Bạn đã đăng nhập thành công! Chào mừng đến với trang chủ.</h2>;
-}
-
-
-function App() {
-  return (
-    <BrowserRouter>
-      <div className="container">
-        <Navigation />
-        <main>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/" element={<HomePage />} />
-            {/* Các trang khác sẽ được thêm vào đây */}
-          </Routes>
-        </main>
-      </div>
-    </BrowserRouter>
-  );
-}
-
-export default App;
+export default RegisterPage;

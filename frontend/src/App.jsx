@@ -1,5 +1,7 @@
+// src/App.jsx
 import React from 'react';
-import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom';
+// 👇 THAY Link BẰNG NavLink
+import { BrowserRouter, Routes, Route, NavLink, useNavigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import './App.css';
@@ -16,14 +18,16 @@ function Navigation() {
 
   return (
     <nav>
-      <Link to="/">Trang chủ</Link>
+      {/* 👇 DÙNG NavLink */}
+      <NavLink to="/" className="logo-link">Trang Chủ </NavLink>
       <div className="nav-links">
         {token ? (
           <button onClick={handleLogout} className="btn-logout">Đăng xuất</button>
         ) : (
           <>
-            <Link to="/login">Đăng nhập</Link>
-            <Link to="/register">Đăng ký</Link>
+            {/* 👇 DÙNG NavLink */}
+            <NavLink to="/login">Đăng nhập</NavLink>
+            <NavLink to="/register">Đăng ký</NavLink>
           </>
         )}
       </div>
@@ -33,7 +37,12 @@ function Navigation() {
 
 // Component Trang chủ đơn giản
 function HomePage() {
-  return <h2>Bạn đã đăng nhập thành công! Chào mừng đến với trang chủ.</h2>;
+  return (
+    <div className="card home-card">
+      <h2>Chào mừng bạn đã đăng nhập!</h2>
+      <p>Đây là trang chủ của ứng dụng.</p>
+    </div>
+  );
 }
 
 
@@ -47,7 +56,6 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/" element={<HomePage />} />
-            {/* Các trang khác sẽ được thêm vào đây */}
           </Routes>
         </main>
       </div>
