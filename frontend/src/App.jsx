@@ -1,12 +1,23 @@
 // src/App.jsx
 import React from 'react';
-// 👇 THAY Link BẰNG NavLink
 import { BrowserRouter, Routes, Route, NavLink, useNavigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
-import './App.css';
+import ProfilePage from './pages/ProfilePage'; // 👈 Import trang mới
+import ProtectedRoute from './components/ProtectedRoute'; // 👈 Import cổng bảo vệ
+import './App.css'; // File CSS chung
 
-// Component cho thanh điều hướng
+// Component Trang chủ
+function HomePage() {
+  return (
+    <div className="auth-card">
+      <h2>Chào mừng bạn đã đăng nhập!</h2>
+      <p>Đây là trang chủ của ứng dụng.</p>
+    </div>
+  );
+}
+
+// Component Navigation (thêm link Profile)
 function Navigation() {
   const navigate = useNavigate();
   const token = localStorage.getItem('authToken');
@@ -18,14 +29,16 @@ function Navigation() {
 
   return (
     <nav>
-      {/* 👇 DÙNG NavLink */}
-      <NavLink to="/" className="logo-link">Trang Chủ </NavLink>
+      <NavLink to="/" className="logo-link">Trang chủ</NavLink>
       <div className="nav-links">
         {token ? (
-          <button onClick={handleLogout} className="btn-logout">Đăng xuất</button>
+          <>
+            {/* 👈 Thêm link Profile */}
+            <NavLink to="/profile">Hồ sơ</NavLink> 
+            <button onClick={handleLogout} className="btn-logout">Đăng xuất</button>
+          </>
         ) : (
           <>
-            {/* 👇 DÙNG NavLink */}
             <NavLink to="/login">Đăng nhập</NavLink>
             <NavLink to="/register">Đăng ký</NavLink>
           </>
@@ -35,17 +48,6 @@ function Navigation() {
   );
 }
 
-// Component Trang chủ đơn giản
-function HomePage() {
-  return (
-    <div className="card home-card">
-      <h2>Chào mừng bạn đã đăng nhập!</h2>
-      <p>Đây là trang chủ của ứng dụng.</p>
-    </div>
-  );
-}
-
-
 function App() {
   return (
     <BrowserRouter>
@@ -53,9 +55,27 @@ function App() {
         <Navigation />
         <main>
           <Routes>
+            {/* Các trang công khai */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/" element={<HomePage />} />
+            
+            {/* Các trang được bảo vệ */}
+            <Route 
+              path="/" 
+              element={
+                <ProtectedRoute>
+                  <HomePage />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
         </main>
       </div>

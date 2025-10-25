@@ -179,3 +179,24 @@ background-color: #EBF5FF;
   display: block;
   margin-bottom: 8px;
 }
+.btn-logout {
+  /* Reset lại style của button */
+  background-color: transparent;
+  border: none;
+  font-family: 'Inter', sans-serif; /* Đảm bảo giống font chữ */
+  
+  /* Áp dụng style giống như thẻ <a> */
+  text-decoration: none;
+  color: var(--danger-red); /* Giữ màu đỏ để cảnh báo */
+  font-weight: 600;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-size: 1rem; /* Đảm bảo giống kích thước chữ */
+}
+
+.btn-logout:hover {
+  background-color: #fbe9e7; /* Nền đỏ nhạt (màu hồng) */
+  color: #c63737; /* Chữ đỏ đậm hơn */
+}
