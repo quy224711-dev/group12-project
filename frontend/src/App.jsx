@@ -7,7 +7,8 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage'; 
-
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 // ... import các component khác ...
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminProtectedRoute from './components/AdminProtectedRoute';
@@ -83,7 +84,9 @@ function App() {
             {/* Các trang công khai */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            
+            {/* --- ROUTE MỚI CHO HOẠT ĐỘNG 4 --- */}
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
             {/* Các trang cần đăng nhập */}
             <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />

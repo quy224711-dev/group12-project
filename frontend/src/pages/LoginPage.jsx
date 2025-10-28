@@ -1,13 +1,14 @@
+// src/pages/LoginPage.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // 👈 1. THÊM IMPORT NÀY
+import { useNavigate, Link } from 'react-router-dom'; // Đảm bảo Link được import
 
 function LoginPage() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [message, setMessage] = useState({ text: '', type: '' });
   const [jwtToken, setJwtToken] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate(); // 👈 2. THÊM DÒNG KHAI BÁO NÀY
+  const navigate = useNavigate(); 
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,7 +27,6 @@ function LoginPage() {
       setJwtToken(token);
       setMessage({ text: '✔ Đăng nhập thành công! Đang chuyển hướng...', type: 'success' });
 
-      // 👇 3. THÊM LẠI ĐOẠN CODE CHUYỂN TRANG
       setTimeout(() => {
         navigate('/'); // Tự động chuyển về trang chủ sau 2 giây
       }, 2000);
@@ -57,11 +57,19 @@ function LoginPage() {
           onChange={handleChange}
           required
         />
+
+        {/* --- ĐÃ DI CHUYỂN LINK "QUÊN MẬT KHẨU" LÊN ĐÂY --- */}
+        <div className="forgot-password-link">
+          <Link to="/forgot-password">Quên mật khẩu?</Link>
+        </div>
+        
         <button type="submit" className="auth-button" disabled={isLoading}>
           {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
         </button>
       </form>
 
+      {/* --- ĐÃ XÓA LINK "QUÊN MẬT KHẨU" KHỎI ĐÂY --- */}
+      
       {/* Display success or error messages */}
       {message.text && (
         <div className={`message-box ${message.type}`}>
@@ -76,6 +84,11 @@ function LoginPage() {
           {jwtToken}
         </div>
       )}
+
+      {/* --- THÊM LINK "ĐĂNG KÝ NGAY" --- */}
+      <div className="register-link">
+        Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
+      </div>
     </div>
   );
 }

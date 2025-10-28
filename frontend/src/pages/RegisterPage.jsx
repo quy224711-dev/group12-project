@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
+import { useNavigate, Link } from 'react-router-dom';
 function RegisterPage() {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [message, setMessage] = useState({ text: '', type: '' });
   const [isLoading, setIsLoading] = useState(false);
-
+  const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -17,7 +17,10 @@ function RegisterPage() {
     try {
       const response = await axios.post('http://localhost:5000/api/signup', formData);
       // Set the success message with a checkmark
-      setMessage({ text: '✔ ' + (response.data.message || 'Đăng ký thành công!'), type: 'success' });
+      setMessage({ text: '✔ Đăng ký thành công! Đang chuyển đến trang đăng nhập...', type: 'success' });
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
     } catch (error) {
       const errorMsg = error.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại.';
       // Set the error message
@@ -63,6 +66,10 @@ function RegisterPage() {
             {message.text}
           </div>
         )}
+        {/* 👈 4. THÊM LINK "ĐĂNG NHẬP NGAY" */}
+      <div className="register-link">
+        Đã có tài khoản? <Link to="/login">Đăng nhập ngay</Link>
+      </div>
       </div>
   
   );

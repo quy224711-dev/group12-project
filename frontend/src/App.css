@@ -31,14 +31,13 @@ body {
 main {
   display: flex;
   justify-content: center;
-  /* align-items: center; */ /* <-- Vô hiệu hóa hoặc xóa dòng này */
-  padding: 40px 0; /* Tăng padding trên để đẩy form xuống một chút */
+  padding: 40px 0;
   min-height: calc(100vh - 150px);
 }
 
 /* --- Navigation Bar --- */
 nav {
-  background-color:  #EBF5FF;
+  background-color: #EBF5FF;
   padding: 1rem 2.5rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
   border-radius: 12px;
@@ -76,19 +75,16 @@ nav a:not(.active):hover {
 
 /* --- Card & Form Styles cho Đăng nhập/Đăng ký --- */
 .auth-card {
-background-color: #EBF5FF; 
+  background-color: #EBF5FF;
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   padding: 50px;
   width: 100%;
-  max-width: 600px; /* <-- Giảm chiều rộng một chút cho cân đối */
-  /* min-height: 400px; */ /* <-- Vô hiệu hóa hoặc xóa dòng này */
+  max-width: 600px;
   text-align: center;
   border: 1px solid var(--border-color);
   transition: max-width 0.5s ease-in-out, padding 0.5s ease-in-out;
 }
-
-
 
 .auth-card h2 {
   margin-top: 0;
@@ -108,7 +104,7 @@ background-color: #EBF5FF;
   border: 1px solid var(--border-color);
   border-radius: 10px;
   font-size: 1rem;
-  background-color: #FFF; /* Nền trắng cho ô input */
+  background-color: #FFF;
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
@@ -179,27 +175,26 @@ background-color: #EBF5FF;
   display: block;
   margin-bottom: 8px;
 }
+
 .btn-logout {
-  /* Reset lại style của button */
   background-color: transparent;
   border: none;
-  font-family: 'Inter', sans-serif; /* Đảm bảo giống font chữ */
-  
-  /* Áp dụng style giống như thẻ <a> */
+  font-family: 'Inter', sans-serif;
   text-decoration: none;
-  color: var(--danger-red); /* Giữ màu đỏ để cảnh báo */
+  color: var(--danger-red);
   font-weight: 600;
   padding: 0.8rem 1.5rem;
   border-radius: 8px;
   transition: all 0.3s ease;
   cursor: pointer;
-  font-size: 1rem; /* Đảm bảo giống kích thước chữ */
+  font-size: 1rem;
 }
 
 .btn-logout:hover {
-  background-color: #fbe9e7; /* Nền đỏ nhạt (màu hồng) */
-  color: #c63737; /* Chữ đỏ đậm hơn */
+  background-color: #fbe9e7;
+  color: #c63737;
 }
+
 /* --- CSS cho Trang Admin --- */
 
 .admin-container {
@@ -207,7 +202,7 @@ background-color: #EBF5FF;
   max-width: 1100px;
   margin: 20px auto;
   padding: 30px;
-  background-color: #fff;
+  background-color: #EBF5FF;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
@@ -222,19 +217,33 @@ background-color: #EBF5FF;
 .users-table {
   width: 100%;
   border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .users-table th,
 .users-table td {
-  padding: 15px;
+  padding: 16px 20px;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
-  color: var(--text-light);
 }
 
 .users-table th {
   color: var(--text-dark);
-  font-weight: 600;
+  font-weight: 700; /* Đậm hơn */
+  background-color: #eaf1f9;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.users-table td {
+  font-weight: 500; /* Chữ trung bình (dễ đọc hơn) */
+  color: var(--text-dark); /* Màu chữ đậm hơn */
+}
+
+/* Thêm vằn cho bảng */
+.users-table tbody tr:nth-child(even) {
   background-color: var(--background-light);
 }
 
@@ -242,22 +251,161 @@ background-color: #EBF5FF;
   border-bottom: none;
 }
 
-.users-table tr:hover {
-  background-color: #fcfdff;
+.users-table tbody tr:hover {
+  background-color: #e9eff8;
 }
 
+/* --- (MỚI) THẺ "ROLE" SẶC SỠ --- */
+.role-badge {
+  padding: 5px 14px; /* Tăng padding */
+  border-radius: 16px;
+  font-weight: 600; /* Chữ đậm */
+  font-size: 0.9rem;
+  text-transform: capitalize;
+  color: var(--white-color); /* Chữ trắng */
+}
+
+.role-badge.admin {
+  background-color: var(--success-green); /* Màu xanh lá cây */
+}
+
+.role-badge.user {
+  background-color: var(--primary-blue); /* Màu xanh dương */
+}
+
+
+/* --- (MỚI) NÚT XÓA NỔI BẬT --- */
 .btn-delete {
-  background-color: transparent;
-  color: var(--danger-red);
-  border: 1px solid var(--danger-red);
-  padding: 8px 12px;
+  background-color: var(--danger-red); /* Màu đỏ sặc sỡ */
+  color: var(--white-color); /* Chữ trắng */
+  border: none;
+  padding: 9px 18px; /* Tăng padding */
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 600; /* Chữ đậm */
   transition: all 0.3s ease;
 }
 
 .btn-delete:hover {
-  background-color: var(--danger-red);
-  color: var(--white-color);
+  background-color: #c0392b; /* Màu đỏ đậm hơn khi di chuột */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.4);
+}
+/* --- CSS CHO LINK "QUÊN MẬT KHẨU" --- */
+.forgot-password-link {
+  text-align: right; /* Cho chữ sang phải */
+  margin-top: -10px; /* Kéo link lại gần ô mật khẩu */
+  margin-bottom: 15px; /* Đẩy nút đăng nhập xuống */
+}
+
+.forgot-password-link a {
+  color: var(--primary-blue); /* Làm màu nổi bật */
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+/* --- CSS CHO LINK "ĐĂNG KÝ NGAY" --- */
+.register-link {
+  margin-top: 25px;
+  font-size: 0.95rem;
+  color: var(--text-light);
+}
+
+.register-link a {
+  font-weight: 600;
+  color: var(--primary-blue);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+/* --- CSS CHO TRANG PROFILE --- */
+.profile-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 50px;
+  width: 100%;
+  max-width: 1000px;
+  align-items: flex-start;
+  /* --- STYLE CỦA AUTH-CARD --- */
+  background-color: #EBF5FF;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 50px;
+  border: 1px solid var(--border-color);
+}
+
+/* --- RESET 2 CỘT CON --- */
+.profile-avatar-card {
+  text-align: center;
+  background: none;
+  box-shadow: none;
+  border: none;
+  padding: 0;
+}
+
+.profile-info-card {
+  text-align: left;
+  background: none;
+  box-shadow: none;
+  border: none;
+  padding: 0;
+}
+
+.avatar-preview {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 25px auto;
+  border: 4px solid var(--border-color);
+  background-color: #e0e6f0;
+  display: block;
+}
+
+/* --- NÂNG CẤP Ô CHỌN TỆP --- */
+.input-file {
+ width: 100%;
+  font-family: 'Inter', sans-serif;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-size: 0.95rem;
+  color: var(--text-light);
+  margin-bottom: 25px; /* Tăng khoảng cách dưới cho input file */
+  height: 48px; /* Giúp input có chiều cao cố định */
+  display: flex; /* Căn chỉnh nội dung bên trong */
+  align-items: center; /* Căn chỉnh nội dung bên trong */
+}
+
+.input-file::file-selector-button {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  color: var(--primary-blue);
+  background-color: var(--background-light);
+  border: none;
+  border-right: 1px solid var(--border-color);
+  padding: 12px 16px;
+  margin-right: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.input-file::file-selector-button:hover {
+  background-color: #e9eff8;
+}
+
+/* --- SỬA LỖI CĂN GIỮA --- */
+.profile-info-card .auth-form label {
+  text-align: left; /* 👈 SỬA THÀNH 'left' */
+  font-weight: 600;
+  margin-bottom: -10px;
+  color: var(--text-light);
+}
+
+.profile-message {
+  grid-column: 1 / -1;
+  width: 100%;
 }
