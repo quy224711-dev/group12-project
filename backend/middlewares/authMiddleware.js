@@ -1,19 +1,27 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
-const authMiddleware = (req, res, next) => {
+// ✅ Middleware xác thực người dùng qua token
+const protect = async (req, res, next) => {
   const token = req.header('Authorization')?.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({ message: 'Không có token, truy cập bị từ chối' });
-  }
+  if (!token) return res.status(401).json({ message: 'Không có token, truy cập bị từ chối' });
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // Lưu thông tin user vào request
+    req.user = decoded;
     next();
-  } catch (err) {
+  } catch (error) {
     res.status(403).json({ message: 'Token không hợp lệ' });
   }
 };
 
-module.exports = authMiddleware;
+// ✅ Middleware chỉ cho admin truy cập
+const adminOnly = (req, res, next) => {
+  if (req.user?.role !== 'admin') {
+    return res.status(403).json({ message: 'Chỉ admin mới được phép thực hiện hành động này' });
+  }
+  next();
+};
+
+// ❗ Xuất đúng cách — phải là object chứa 2 function
+module.exports = { protect, adminOnly };
