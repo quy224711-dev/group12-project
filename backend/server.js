@@ -28,3 +28,7 @@ app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 
 const adminRoutes = require('./routes/adminRoutes');
 app.use('/api', adminRoutes);
+const passwordRoutes = require('./routes/passwordRoutes');
+const profileRoutes = require('./routes/profileRoutes');
+app.use('/api', passwordRoutes);
+app.use('/api', profileRoutes);
