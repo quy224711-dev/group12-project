@@ -38,3 +38,5 @@ Thumbs.db
 # Cài đặt của các code editor
 .vscode/
 .idea/
+/frontend/node_modules/
+/backend/node_modules/
