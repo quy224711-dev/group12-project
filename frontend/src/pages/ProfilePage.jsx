@@ -7,7 +7,7 @@ function ProfilePage() {
   const [formData, setFormData] = useState({ name: '', email: '' });
   const [message, setMessage] = useState({ text: '', type: '' });
   const [isLoading, setIsLoading] = useState(true);
-
+  const [isUploading, setIsUploading] = useState(false);
   // === STATE MỚI CHO AVATAR ===
   const [avatarFile, setAvatarFile] = useState(null); 
   const [avatarPreview, setAvatarPreview] = useState(null);
@@ -22,7 +22,7 @@ function ProfilePage() {
           name: response.data.name,
           email: response.data.email,
         });
-        setAvatarPreview(response.data.avatarUrl); // 👈 Lấy URL avatar
+        setAvatarPreview(response.data.avatar); // 👈 Lấy URL avatar
         setIsLoading(false);
       } catch (error) {
         setIsLoading(false);
@@ -73,7 +73,8 @@ function ProfilePage() {
     // Phải dùng FormData để gửi file lên server
     const uploadFormData = new FormData();
     uploadFormData.append('avatar', avatarFile); // 'avatar' phải giống key backend yêu cầu
-
+    setIsUploading(true);
+    setMessage({ text: '', type: '' }); // Xóa thông báo cũ
     try {
       // Gọi API upload (dùng api.js vì CẦN token)
       const response = await api.post('/upload-avatar', uploadFormData, {
@@ -83,15 +84,20 @@ function ProfilePage() {
       });
 
       // Cập nhật lại avatar mới từ server
-      setAvatarPreview(response.data.avatarUrl); 
+      console.log("Backend trả về:", response.data); 
+      setAvatarPreview(response.data.avatar); // 👈 Đổi thành "avatar" cho khớp backend
       setMessage({ text: '✔ Cập nhật avatar thành công!', type: 'success' });
       setAvatarFile(null); // Xóa file đã chọn
 
     } catch (error) {
       const errorMsg = error.response?.data?.message || 'Lỗi khi upload ảnh.';
       setMessage({ text: '✖ ' + errorMsg, type: 'error' });
+    }finally {
+      // 👇 THÊM 3 DÒNG NÀY VÀO
+      setIsUploading(false); // Tắt trạng thái loading BẤT KỂ LỖI HAY KHÔNG
     }
-  };
+ }; 
+
 
   if (isLoading) {
     return <div>Đang tải thông tin...</div>;
@@ -121,9 +127,11 @@ function ProfilePage() {
           <button 
             type="submit" 
             className="auth-button" 
-            disabled={!avatarFile}
+            // Chỉ vô hiệu hóa khi ĐANG UPLOAD
+            disabled={isUploading} 
           >
-            Upload ảnh mới
+            {/* Thay đổi text khi đang upload */}
+            {isUploading ? 'Đang upload...' : 'Upload ảnh mới'}
           </button>
         </form>
       </div>
