@@ -5,8 +5,8 @@ const cors = require('cors');
 const userRoutes = require('./routes/user');
 
 dotenv.config();
-const app = express();
 
+const app = express();
 app.use(express.json());
 app.use(cors()); // Cho phép frontend ở port khác gọi API
 
@@ -17,6 +17,10 @@ mongoose.connect(process.env.MONGO_URI)
 
 // Sử dụng routes
 app.use('/users', userRoutes);
+const authRoutes = require('./routes/authRoutes');
+app.use('/api', authRoutes);
+app.use('/api', require('./routes/profileRoutes'));
+
 
 // Đổi port sang 5000
 const PORT = process.env.PORT || 5000;
