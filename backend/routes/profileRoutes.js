@@ -1,10 +1,11 @@
+const { getProfile, updateProfile, changePassword, uploadAvatar } = require('../controllers/profileController');
 const { protect } = require('../middlewares/authMiddleware');
-const profileController = require('../controllers/profileController');
 const express = require('express');
 const router = express.Router();
 
-// Các route yêu cầu xác thực
-router.get('/profile', protect, profileController.getProfile);
-router.put('/profile', protect, profileController.updateProfile);
+router.get('/profile', protect, getProfile);
+router.put('/profile', protect, updateProfile);
+router.put('/change-password', protect, changePassword);
+router.post('/upload-avatar', protect, uploadAvatar);
 
 module.exports = router;
