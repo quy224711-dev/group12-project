@@ -23,7 +23,6 @@ function AdminPage() {
         setMessage({ text: 'Không thể tải dữ liệu. Bạn có phải Admin?', type: 'error' });
       }
     };
-
     fetchUsers();
   }, []); // Mảng rỗng đảm bảo hàm chỉ chạy 1 lần
 
@@ -71,7 +70,11 @@ function AdminPage() {
             <tr key={user._id}>
               <td>{user.name}</td>
               <td>{user.email}</td>
-              <td>{user.role}</td>
+              <td>
+                <span className={`role-badge ${user.role}`}>
+                  {user.role}
+                </span>
+              </td>
               <td>
                 <button 
                   className="btn-delete"

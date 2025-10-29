@@ -1,28 +1,48 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, NavLink, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, NavLink, useNavigate, Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
-// ... import các trang khác ...
+
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage'; 
-
-// ... import các component khác ...
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminProtectedRoute from './components/AdminProtectedRoute';
 import './App.css';
-// 👈 ĐÃ XÓA DÒNG IMPORT CSS TRÙNG LẶP TẠI ĐÂY
 
-// ... Component HomePage không đổi ...
-function HomePage() { 
+
+function HomePage() {
   return (
-    <div className="auth-card">
-      <h2>Chào mừng bạn đã đăng nhập!</h2>
-      <p>Đây là trang chủ của ứng dụng.</p>
+    // Thêm class mới .home-container
+    <div className="auth-card home-container">
+      
+      {/* CỘT 1: CHỮ */}
+      <div className="home-text">
+        <h2>Chào mừng trở lại!</h2>
+        <p>
+          Đây là trang quản lý dự án của bạn. Hãy bắt đầu bằng cách
+          kiểm tra hồ sơ hoặc xem trang quản lý nếu bạn là Admin.
+        </p>
+        <Link to="/profile" className="home-cta-button">
+          Xem hồ sơ của bạn
+        </Link>
+      </div>
+
+      {/* CỘT 2: HÌNH ẢNH */}
+      <div className="home-image">
+        <img 
+          src="welcome-illustration.png"
+          alt="Chào mừng" 
+        />
+      </div>
+
     </div>
-  ); 
+  );
 }
+
 
 // Lấy role từ token
 const getRoleFromToken = () => {
@@ -83,7 +103,9 @@ function App() {
             {/* Các trang công khai */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            
+            {/* --- ROUTE MỚI CHO HOẠT ĐỘNG 4 --- */}
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
             {/* Các trang cần đăng nhập */}
             <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
             <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
