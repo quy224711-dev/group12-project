@@ -1,16 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
-const { protect, adminOnly } = require('../middlewares/authMiddleware');
+const authMiddleware = require('../middlewares/authMiddleware');
+const checkRole = require('../middlewares/checkRole');
 
+// Test log
 console.log('🔍 adminRoutes check:', {
-  protect,
-  adminOnly,
+  protect: authMiddleware.protect,
   getAllUsers: adminController.getAllUsers,
   deleteUser: adminController.deleteUser
 });
 
-router.get('/users', protect, adminOnly, adminController.getAllUsers);
-router.delete('/users/:id', protect, adminOnly, adminController.deleteUser);
+// ✅ Moderator trở lên có thể xem danh sách user
+router.get('/users', authMiddleware.protect, checkRole('moderator'), adminController.getAllUsers);
+
+// ✅ Chỉ Admin mới được xóa user
+router.delete('/users/:id', authMiddleware.protect, checkRole('admin'), adminController.deleteUser);
 
 module.exports = router;
