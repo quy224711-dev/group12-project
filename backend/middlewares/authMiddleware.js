@@ -1,39 +1,48 @@
-import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+// backend/middlewares/authMiddleware.js
+
+const jwt = require("jsonwebtoken"); // 👈 Sửa 1: Dùng require
+// const User = require("../models/User.js"); // (Không cần User trong file này)
 
 // ✅ Middleware xác thực người dùng qua token
-export const protect = async (req, res, next) => {
-  const token = req.header("Authorization")?.split(" ")[1];
-  if (!token) {
-    return res.status(401).json({ message: "Không có token, truy cập bị từ chối" });
+const protect = async (req, res, next) => { // 👈 Sửa 2: Dùng const
+  let token;
+
+  // Lấy token từ header
+  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+    try {
+      token = req.headers.authorization.split(" ")[1];
+      
+      // Xác thực token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      
+      // Gắn user vào request (chúng ta không cần tìm trong DB, token đã có info)
+      req.user = decoded;
+      
+      next();
+    } catch (error) {
+      console.error('LỖI XÁC THỰC TOKEN:', error.message);
+      res.status(401).json({ message: "Token không hợp lệ hoặc đã hết hạn (lỗi 403)" });
+    }
   }
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    res.status(403).json({ message: "Token không hợp lệ hoặc đã hết hạn" });
+  if (!token) {
+    res.status(401).json({ message: "Không có token, truy cập bị từ chối" });
   }
 };
 
 // ✅ Middleware chỉ cho admin truy cập
-export const adminOnly = (req, res, next) => {
-  if (req.user?.role !== "admin") {
-    return res.status(403).json({ message: "Chỉ admin mới được phép thực hiện hành động này" });
+const adminOnly = (req, res, next) => { // 👈 Sửa 2: Dùng const
+  if (req.user && req.user.role === "admin") {
+    next();
+  } else {
+    res.status(403).json({ message: "Chỉ admin mới được phép thực hiện hành động này" });
   }
-  next();
 };
 
-// ✅ Middleware xác thực Access Token (dùng cho Refresh Token feature)
-export const verifyAccessToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-  if (!token) return res.status(401).json({ message: "Access token missing" });
+// ❌ Không cần hàm verifyAccessToken này nữa, vì nó giống hệt `protect`
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ message: "Invalid or expired token" });
-    req.user = user;
-    next();
-  });
+// 👈 Sửa 3: Dùng module.exports
+module.exports = {
+  protect,
+  adminOnly,
 };
