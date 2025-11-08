@@ -1,48 +1,46 @@
 // backend/middlewares/authMiddleware.js
+const jwt = require("jsonwebtoken");
+// (Không cần User model ở đây nữa)
 
-const jwt = require("jsonwebtoken"); // 👈 Sửa 1: Dùng require
-// const User = require("../models/User.js"); // (Không cần User trong file này)
+// ✅ SỬA LẠI HÀM PROTECT
+const protect = async (req, res, next) => {
+  let token;
 
-// ✅ Middleware xác thực người dùng qua token
-const protect = async (req, res, next) => { // 👈 Sửa 2: Dùng const
-  let token;
+  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+    try {
+      token = req.headers.authorization.split(" ")[1];
+      
+      // 1. Xác thực token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      
+      // 2. Gắn user (với userId) vào request
+      // (File controller sẽ dùng req.user.userId để tìm trong DB)
+      req.user = decoded; // 👈 req.user BÂY GIỜ LÀ { userId: "...", role: "..." }
+      
+      next();
+    } catch (error) {
+      console.error('LỖI XÁC THỰC TOKEN:', error.message);
+      // Trả về 401 để api.js (frontend) biết mà refresh
+      res.status(401).json({ message: "Token không hợp lệ hoặc đã hết hạn" });
+    }
+  }
 
-  // Lấy token từ header
-  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
-    try {
-      token = req.headers.authorization.split(" ")[1];
-      
-      // Xác thực token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      
-      // Gắn user vào request (chúng ta không cần tìm trong DB, token đã có info)
-      req.user = decoded;
-      
-      next();
-    } catch (error) {
-      console.error('LỖI XÁC THỰC TOKEN:', error.message);
-      res.status(401).json({ message: "Token không hợp lệ hoặc đã hết hạn (lỗi 403)" });
-    }
-  }
-
-  if (!token) {
-    res.status(401).json({ message: "Không có token, truy cập bị từ chối" });
-  }
+  if (!token) {
+    res.status(401).json({ message: "Không có token, truy cập bị từ chối" });
+  }
 };
 
-// ✅ Middleware chỉ cho admin truy cập
-const adminOnly = (req, res, next) => { // 👈 Sửa 2: Dùng const
-  if (req.user && req.user.role === "admin") {
-    next();
-  } else {
-    res.status(403).json({ message: "Chỉ admin mới được phép thực hiện hành động này" });
-  }
+// ✅ HÀM ADMINONLY (Giữ nguyên)
+const adminOnly = (req, res, next) => {
+  // req.user đã được hàm protect ở trên gắn vào
+  if (req.user && req.user.role === "admin") {
+    next();
+  } else {
+    res.status(403).json({ message: "Chỉ admin mới được phép thực hiện hành động này" });
+  }
 };
 
-// ❌ Không cần hàm verifyAccessToken này nữa, vì nó giống hệt `protect`
-
-// 👈 Sửa 3: Dùng module.exports
 module.exports = {
-  protect,
-  adminOnly,
+  protect,
+  adminOnly,
 };

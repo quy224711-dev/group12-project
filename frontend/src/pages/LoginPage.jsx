@@ -1,17 +1,16 @@
-// src/pages/LoginPage.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux'; // 👈 Import
+import { useDispatch } from 'react-redux';
 import { loginSuccess } from '../redux/authSlice';
 
 function LoginPage() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [message, setMessage] = useState({ text: '', type: '' });
-  // const [jwtToken, setJwtToken] = useState(''); // XÓA: Không cần state này nữa
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate(); 
-  const dispatch = useDispatch(); // 👈 Khởi tạo dispatch
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -19,35 +18,40 @@ function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage({ text: '', type: '' });
+    setIsLoading(true);
+
     try {
-      // Gọi API login
       const response = await axios.post('http://localhost:5000/api/auth/login', formData);
       
-      // Nhận 2 token từ SV1
-      const { accessToken, refreshToken } = response.data;
+      // ✅ Lấy đủ 3 thông tin
+      const { accessToken, refreshToken, user } = response.data;
       
-      // 1. Dùng Redux để lưu accessToken (vào state + localStorage)
-      dispatch(loginSuccess({ accessToken: accessToken }));
-
-      // 2. Lưu refreshToken (dài hạn) vào localStorage
-      localStorage.setItem('refreshToken', refreshToken);
-
-      setMessage({ text: '✔ Đăng nhập thành công! Đang chuyển hướng...', type: 'success' });
+      // ✅ Dispatch đầy đủ
+      dispatch(loginSuccess({ accessToken, refreshToken, user }));
       
-      setTimeout(() => {
-        navigate('/'); // Chuyển về trang chủ
-      }, 1000);
+      // ✅ Chuyển hướng theo role
+      navigate(user.role === 'admin' ? '/admin' : '/');
       
     } catch (err) {
-      const errorMsg = err.response?.data?.message || 'Lỗi đăng nhập';
+      let errorMsg = 'Lỗi đăng nhập';
+      
+      if (err.response) {
+        if (err.response.status === 429) {
+          errorMsg = err.response.data.message || 'Bạn đã đăng nhập sai quá nhiều lần.';
+        } else if (err.response.data?.message) {
+          errorMsg = err.response.data.message;
+        }
+      }
+      
       setMessage({ text: '✖ ' + errorMsg, type: 'error' });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="auth-split-container">
-     <div className="auth-welcome-section">
-    
+      <div className="auth-welcome-section">
         <h2>Chào mừng bạn trở lại!</h2>
         <p>Đăng nhập để tiếp tục quản lý công việc và dự án của bạn.</p>
       </div>
@@ -83,15 +87,12 @@ function LoginPage() {
           </button>
         </form>
       
-        {/* Chỉ hiển thị thông báo LỖI */}
         {message.text && message.type === 'error' && (
           <div className={`message-box ${message.type}`}>
             {message.text}
           </div>
         )}
         
-        {/* XÓA: Khối hiển thị JWT Token đã bị xóa */}
-
         <div className="register-link">
           Chưa có tài khoản? <Link to="/register">Đăng ký ngay</Link>
         </div>

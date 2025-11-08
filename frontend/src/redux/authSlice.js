@@ -1,38 +1,47 @@
-// src/redux/authSlice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { jwtDecode } from 'jwt-decode';
 
-// Tự động lấy token từ localStorage khi tải lại trang
-const token = localStorage.getItem('accessToken');
 const initialState = {
-  token: token,
-  user: token ? jwtDecode(token) : null, // Tự giải mã token
+  token: localStorage.getItem('accessToken') || null,
+  user: JSON.parse(localStorage.getItem('user')) || null,
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    // Hành động: Cất accessToken vào kho (state) VÀ localStorage
     loginSuccess: (state, action) => {
-      const { accessToken } = action.payload;
+      const { accessToken, user, refreshToken } = action.payload;
+      
       state.token = accessToken;
+      state.user = user;
+      
       localStorage.setItem('accessToken', accessToken);
-      state.user = jwtDecode(accessToken); 
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      if (refreshToken) {
+        localStorage.setItem('refreshToken', refreshToken);
+      }
     },
-    // Hành động: Dọn kho (state) VÀ localStorage
+
     logoutSuccess: (state) => {
       state.token = null;
       state.user = null;
       localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken'); // Xóa cả 2
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
     },
+    
+    // ✅ QUAN TRỌNG: Chỉ cập nhật token, KHÔNG xóa user
+    setAccessToken: (state, action) => {
+      const { accessToken } = action.payload;
+      state.token = accessToken;
+      localStorage.setItem('accessToken', accessToken);
+      // ⚠️ KHÔNG xóa state.user ở đây!
+    }
   },
 });
 
-export const { loginSuccess, logoutSuccess } = authSlice.actions;
-export default authSlice.reducer;
-
-// Hàm selector: Giúp component lấy dữ liệu từ kho
-export const selectCurrentToken = (state) => state.auth.token;
+export const { loginSuccess, logoutSuccess, setAccessToken } = authSlice.actions;
 export const selectCurrentUser = (state) => state.auth.user;
+export const selectCurrentToken = (state) => state.auth.token;
+export default authSlice.reducer;

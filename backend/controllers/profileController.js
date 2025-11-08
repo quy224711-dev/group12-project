@@ -1,14 +1,14 @@
+const Log = require('../models/Log');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const cloudinary = require('../utils/cloudinary');
 const multer = require('multer');
 
-// -------------------------
 // Lấy thông tin cá nhân
-// -------------------------
 exports.getProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    // ✅ FIX: Dùng req.user.userId
+    const user = await User.findById(req.user.userId).select('-password');
     if (!user)
       return res.status(404).json({ message: 'Không tìm thấy người dùng' });
     res.json(user);
@@ -17,9 +17,7 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// -------------------------
 // Cập nhật thông tin cá nhân
-// -------------------------
 exports.updateProfile = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -33,7 +31,8 @@ exports.updateProfile = async (req, res) => {
       updateData.password = hashed;
     }
 
-    const updatedUser = await User.findByIdAndUpdate(req.user.id, updateData, {
+    // ✅ FIX: Dùng req.user.userId
+    const updatedUser = await User.findByIdAndUpdate(req.user.userId, updateData, {
       new: true
     }).select('-password');
 
@@ -46,13 +45,12 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// -------------------------
-// Đổi mật khẩu (tùy chọn, người dùng đang đăng nhập)
-// -------------------------
+// Đổi mật khẩu
 exports.changePassword = async (req, res) => {
   try {
     const { oldPassword, newPassword } = req.body;
-    const user = await User.findById(req.user.id);
+    // ✅ FIX: Dùng req.user.userId
+    const user = await User.findById(req.user.userId);
 
     const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch)
@@ -67,9 +65,7 @@ exports.changePassword = async (req, res) => {
   }
 };
 
-// -------------------------
-// Upload ảnh đại diện (Cloudinary)
-// -------------------------
+// Upload ảnh đại diện
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
@@ -80,14 +76,14 @@ exports.uploadAvatar = [
       if (!req.file)
         return res.status(400).json({ message: 'Chưa chọn ảnh!' });
 
-      // Upload ảnh lên Cloudinary
       cloudinary.uploader.upload_stream(
         { folder: 'avatars' },
         async (error, result) => {
           if (error)
             return res.status(500).json({ message: 'Lỗi upload ảnh', error });
 
-          const user = await User.findById(req.user.id);
+          // ✅ FIX: Dùng req.user.userId
+          const user = await User.findById(req.user.userId);
           user.avatar = result.secure_url;
           await user.save();
 
@@ -102,3 +98,15 @@ exports.uploadAvatar = [
     }
   }
 ];
+
+// ✅ Lấy logs cho admin (HĐ5)
+exports.getAdminLogs = async (req, res) => {
+  try {
+    const logs = await Log.find()
+      .sort({ timestamp: -1 })
+      .limit(100);
+    res.json(logs);
+  } catch (err) {
+    res.status(500).json({ message: 'Lỗi server khi lấy logs' });
+  }
+};

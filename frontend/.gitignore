@@ -1,0 +1,10 @@
+# Bỏ qua thư mục node_modules
+/node_modules
+
+# Bỏ qua file .env (file bí mật)
+.env
+
+# Bỏ qua các file rác khác
+build
+.DS_Store
+*.log
