@@ -29,8 +29,7 @@ function LoginPage() {
       // ✅ Dispatch đầy đủ
       dispatch(loginSuccess({ accessToken, refreshToken, user }));
       
-      // ✅ Chuyển hướng theo role
-      navigate(user.role === 'admin' ? '/admin' : '/');
+     navigate('/');
       
     } catch (err) {
       let errorMsg = 'Lỗi đăng nhập';

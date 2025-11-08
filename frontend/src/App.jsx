@@ -58,7 +58,7 @@ function Navigation() {
     try {
       // Sửa 2: Thêm 2 dòng này ĐỂ GỌI API LOGOUT
       // Dòng này báo cho backend xóa RefreshToken khỏi DB
-      await api.post('/api/auth/logout', { 
+      await api.post('/auth/logout', { 
         refreshToken: localStorage.getItem('refreshToken') 
       });
     } catch (err) {
