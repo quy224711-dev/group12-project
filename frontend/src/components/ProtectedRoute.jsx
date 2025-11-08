@@ -1,16 +1,16 @@
-// src/components/ProtectedRoute.jsx
-import React from 'react';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '../redux/authSlice';
 import { Navigate } from 'react-router-dom';
 
 function ProtectedRoute({ children }) {
-  const token = localStorage.getItem('authToken');
+  const user = useSelector(selectCurrentUser); // 👈 Hỏi kho Redux
 
-  if (!token) {
-    // Nếu không có token, chuyển hướng về trang đăng nhập
+  if (!user) {
+    // Nếu trong kho không có user, đá về login
     return <Navigate to="/login" replace />;
   }
 
-  // Nếu có token, cho phép hiển thị component con (ví dụ: ProfilePage)
+  // Nếu có user, cho phép vào
   return children;
 }
 

@@ -1,44 +1,45 @@
-// src/pages/AdminPage.jsx
+// frontend/src/pages/AdminPage.jsx
 import React, { useState, useEffect } from 'react';
-import api from '../api'; // 👈 Đã bật import
+import api from '../api';
+// KHÔNG cần import './AdminPage.css'; vì bạn dùng App.css
 
 function AdminPage() {
   const [users, setUsers] = useState([]);
+  const [logs, setLogs] = useState([]); // 👈 STATE MỚI CHO HĐ 5
   const [message, setMessage] = useState({ text: '', type: '' });
   const [isLoading, setIsLoading] = useState(true);
 
-  // 1. Lấy danh sách người dùng (DÙNG DỮ LIỆU THẬT)
+  // 1. Nâng cấp: Lấy cả User (HĐ 2) và Logs (HĐ 5)
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
       try {
-        // Gọi API thật
-        const response = await api.get('/users');
-        setUsers(response.data);
-        setIsLoading(false);
+        // Gọi 2 API song song để tải nhanh hơn
+        const [usersResponse, logsResponse] = await Promise.all([
+          api.get('/users'),      // API của HĐ 2
+          api.get('/admin/logs') // API của HĐ 5
+        ]);
+        
+        setUsers(usersResponse.data);
+        setLogs(logsResponse.data); // 👈 LƯU LOGS VÀO STATE
       } catch (error) {
-        // Báo lỗi nếu không gọi được (ví dụ: không phải admin)
-        console.error("Lỗi khi tải danh sách người dùng:", error);
-        setIsLoading(false);
+        console.error("Lỗi khi tải dữ liệu admin:", error);
         setMessage({ text: 'Không thể tải dữ liệu. Bạn có phải Admin?', type: 'error' });
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchUsers();
-  }, []); // Mảng rỗng đảm bảo hàm chỉ chạy 1 lần
+    fetchData();
+  }, []);
 
-  // 2. Xử lý xóa người dùng (XÓA DỮ LIỆU THẬT)
+  // 2. Xử lý xóa (Giữ nguyên, không đổi)
   const handleDelete = async (userId) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
       try {
-        // Gọi API thật để xóa user
         await api.delete(`/users/${userId}`);
-
-        // Cập nhật lại giao diện khi API thành công
         setUsers(users.filter(user => user._id !== userId));
         setMessage({ text: '✔ Xóa người dùng thành công!', type: 'success' });
-
       } catch (error) {
-        // Báo lỗi nếu API thất bại
         const errorMsg = error.response?.data?.message || 'Có lỗi xảy ra.';
         setMessage({ text: '✖ ' + errorMsg, type: 'error' });
       }
@@ -46,17 +47,21 @@ function AdminPage() {
   };
 
   if (isLoading) {
-    return <div>Đang tải danh sách người dùng...</div>;
+    // Cập nhật text
+    return <div className="auth-card">Đang tải dữ liệu Admin...</div>;
   }
 
-  // Phần JSX (HTML) giữ nguyên
+  // 3. Nâng cấp JSX (thêm bảng Logs)
   return (
-    <div className="admin-container">
+    // Đổi tên class cho thống nhất (tùy chọn)
+    <div className="admin-container auth-card">
+      
+      {/* BẢNG 1: QUẢN LÝ USER (HĐ 2) */}
       <h2>Quản lý Người dùng</h2>
       {message.text && (
         <div className={`message-box ${message.type}`}>{message.text}</div>
       )}
-      <table className="users-table">
+      <table className="admin-table"> {/* Đổi tên class */}
         <thead>
           <tr>
             <th>Tên</th>
@@ -76,7 +81,7 @@ function AdminPage() {
                 </span>
               </td>
               <td>
-                <button 
+                <button
                   className="btn-delete"
                   onClick={() => handleDelete(user._id)}
                 >
@@ -87,6 +92,29 @@ function AdminPage() {
           ))}
         </tbody>
       </table>
+      
+      {/* ===== BẢNG 2: NHẬT KÝ HOẠT ĐỘNG (HĐ 5) ===== */}
+      <h2 style={{ marginTop: '40px' }}>Nhật ký hoạt động</h2>
+      <table className="admin-table"> {/* Dùng chung 1 class CSS */}
+        <thead>
+          <tr>
+            <th>Thời gian</th>
+            <th>Người dùng (Email)</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+        <tbody>
+          {logs.map(log => (
+            <tr key={log._id}> {/* Giả sử SV3 dùng _id */}
+              <td>{new Date(log.timestamp).toLocaleString('vi-VN')}</td>
+              <td>{log.userEmail}</td>
+              <td>{log.action}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {/* ========================================== */}
+      
     </div>
   );
 }

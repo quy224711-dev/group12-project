@@ -1,10 +1,16 @@
+const { logAction } = require('../utils/logService');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const cloudinary = require('../utils/cloudinary');
+const multer = require('multer');
+const streamifier = require('streamifier');
+const RefreshToken = require('../models/RefreshToken');
 
-//  Đăng ký (Sign Up)
+// =========================
+// 1️⃣ Đăng ký (Sign Up)
+// =========================
 exports.signup = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -23,6 +29,7 @@ exports.signup = async (req, res) => {
     });
 
     await newUser.save();
+    await logAction('register', newUser._id, email);
 
     res.status(201).json({ message: 'Đăng ký thành công!' });
   } catch (err) {
@@ -30,41 +37,139 @@ exports.signup = async (req, res) => {
   }
 };
 
-//  Đăng nhập (Login)
+// =========================
+// 2️⃣ Đăng nhập (Login) - FIXED
+// =========================
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user)
+    if (!user) {
+      await logAction('login_fail_email', null, email);
       return res.status(404).json({ message: 'Không tìm thấy người dùng!' });
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
+    if (!isMatch) {
+      await logAction('login_fail_password', user._id, user.email);
       return res.status(400).json({ message: 'Sai mật khẩu!' });
+    }
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
+    // ✅ FIX: Access Token (1 phút) - userId phải là "userId" không phải "id"
+    const accessToken = jwt.sign(
+      { userId: user._id, role: user.role }, // 👈 ĐỔI TỪ "id" THÀNH "userId"
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '1m' }
     );
 
+    // ✅ FIX: Refresh Token (7 ngày) - userId phải khớp với protect middleware
+    const refreshToken = jwt.sign(
+      { userId: user._id }, // 👈 ĐỔI TỪ "id" THÀNH "userId"
+      process.env.JWT_REFRESH_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    // Lưu Refresh Token vào DB
+    await RefreshToken.create({
+      userId: user._id,
+      token: refreshToken,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    });
+
+    await logAction('login_success', user._id, user.email);
+
+    // ✅ FIX: Trả về đầy đủ thông tin user
     res.json({
       message: 'Đăng nhập thành công!',
-      token,
-      user: { id: user._id, name: user.name, role: user.role }
+      accessToken,
+      refreshToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar || null
+      }
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-//  Đăng xuất (Logout)
-exports.logout = (req, res) => {
-  res.json({ message: 'Đăng xuất thành công (xóa token ở client).' });
+// =========================
+// 3️⃣ Refresh Token API - FIXED
+// =========================
+exports.refreshToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken)
+      return res.status(401).json({ message: 'Thiếu refresh token!' });
+
+    // ✅ FIX 1: Kiểm tra token trong DB trước
+    const storedToken = await RefreshToken.findOne({ token: refreshToken });
+    if (!storedToken)
+      return res.status(403).json({ message: 'Refresh token không hợp lệ!' });
+
+    // ✅ FIX 2: Verify token
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET, async (err, decoded) => {
+      if (err)
+        return res.status(403).json({ message: 'Refresh token hết hạn!' });
+
+      // ✅ FIX 3: Lấy thông tin user từ DB
+      const user = await User.findById(decoded.userId);
+      if (!user)
+        return res.status(404).json({ message: 'User không tồn tại!' });
+
+      // ✅ FIX 4: Tạo Access Token mới (phải có userId và role)
+      const newAccessToken = jwt.sign(
+        { userId: decoded.userId, role: user.role }, // 👈 THÊM role
+        process.env.JWT_SECRET,
+        { expiresIn: '1m' }
+      );
+
+      // ✅ FIX 5: Trả về cả user info để frontend không mất state
+      res.json({
+        message: 'Cấp mới Access Token thành công!',
+        accessToken: newAccessToken,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          avatar: user.avatar || null
+        }
+      });
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
-// Quên mật khẩu
+// =========================
+// 4️⃣ Đăng xuất (Logout)
+// =========================
+exports.logout = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (refreshToken) {
+      await RefreshToken.deleteOne({ token: refreshToken });
+    }
+    
+    // ✅ Log activity nếu có user
+    if (req.user) {
+      await logAction('logout', req.user.userId, req.user.email);
+    }
+    
+    res.json({ message: 'Đăng xuất thành công!' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// =========================
+// 5️⃣ Quên mật khẩu (Forgot Password)
+// =========================
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -73,23 +178,21 @@ exports.forgotPassword = async (req, res) => {
     if (!user)
       return res.status(404).json({ message: 'Không tìm thấy email!' });
 
-    // Tạo token reset mật khẩu
     const resetToken = crypto.randomBytes(32).toString('hex');
     user.resetPasswordToken = resetToken;
-    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000; // 15 phút
+    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
     await user.save();
 
-    // Trả token ra để test trên Postman
-    res.json({
-      message: 'Token reset được tạo thành công!',
-      resetToken
-    });
+    const resetLink = `http://localhost:3000/reset-password/${resetToken}`;
+    res.json({ message: 'Token reset được tạo thành công!', resetLink });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-//  Đặt lại mật khẩu bằng token reset
+// =========================
+// 6️⃣ Đặt lại mật khẩu (Reset Password)
+// =========================
 exports.resetPassword = async (req, res) => {
   try {
     const { token } = req.params;
@@ -106,16 +209,17 @@ exports.resetPassword = async (req, res) => {
     user.password = await bcrypt.hash(newPassword, 10);
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
-
     await user.save();
+
     res.json({ message: 'Đổi mật khẩu thành công!' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-// Upload avatar (Cloudinary)
-const multer = require('multer');
+// =========================
+// 7️⃣ Upload avatar (Cloudinary)
+// =========================
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
@@ -126,26 +230,31 @@ exports.uploadAvatar = [
       if (!req.file)
         return res.status(400).json({ message: 'Chưa chọn ảnh!' });
 
-      const result = await cloudinary.uploader.upload_stream(
-        { folder: 'avatars' },
-        async (error, uploadResult) => {
-          if (error)
-            return res.status(500).json({ message: 'Lỗi upload ảnh!' });
+      const streamUpload = (buffer) => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: 'avatars' },
+            (error, result) => {
+              if (result) resolve(result);
+              else reject(error);
+            }
+          );
+          streamifier.createReadStream(buffer).pipe(stream);
+        });
+      };
 
-          const user = await User.findById(req.user.id);
-          user.avatar = uploadResult.secure_url;
-          await user.save();
+      const result = await streamUpload(req.file.buffer);
+      // ✅ FIX: Dùng req.user.userId thay vì req.user.id
+      const user = await User.findById(req.user.userId);
+      user.avatar = result.secure_url;
+      await user.save();
 
-          res.json({
-            message: 'Upload avatar thành công!',
-            avatar: user.avatar
-          });
-        }
-      );
-
-      result.end(req.file.buffer);
+      res.json({
+        message: 'Upload avatar thành công!',
+        avatar: result.secure_url
+      });
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      res.status(500).json({ message: 'Lỗi server', error: err.message });
     }
   }
 ];

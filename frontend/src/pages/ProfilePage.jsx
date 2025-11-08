@@ -43,6 +43,9 @@ function ProfilePage() {
     try {
       const response = await api.put('/profile', formData);
       setProfile(response.data);
+      if(response.data.avatar) {
+      setAvatarPreview(response.data.avatar);
+      }
       setMessage({ text: '✔ Cập nhật thông tin thành công!', type: 'success' });
     } catch (error) {
       const errorMsg = error.response?.data?.message || 'Có lỗi xảy ra.';

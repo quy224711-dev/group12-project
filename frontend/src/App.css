@@ -11,9 +11,11 @@
   --white-color: #FFFFFF;
   --danger-red: #E74C3C;
   --success-green: #2ECC71;
+  --admin-green: #10B981;
+  --user-blue: #3B82F6;
 }
 
-/* --- Global Styles (SỬA ĐỔI) --- */
+/* --- Global Styles --- */
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
@@ -34,7 +36,7 @@ main {
   min-height: calc(100vh - 150px);
 }
 
-/* --- Navigation Bar (SỬA ĐỔI HOÀN TOÀN) --- */
+/* --- Navigation Bar --- */
 .header-wrapper {
   background-color: var(--white-color);
   border-bottom: 1px solid var(--border-color);
@@ -94,7 +96,7 @@ nav a:not(.active):hover {
   align-items: center;
 }
 
-/* --- (MỚI) BỐ CỤC 2 CỘT CHO ĐĂNG NHẬP/ĐĂNG KÝ --- */
+/* --- Auth Split Container --- */
 .auth-split-container {
   display: flex;
   border-radius: 20px;
@@ -105,9 +107,11 @@ nav a:not(.active):hover {
   margin-top: 50px;
 }
 
-/* Cột trái: Welcome */
 .auth-welcome-section {
-  background: linear-gradient(135deg, var(--primary-blue-dark) 0%, var(--primary-blue) 100%);
+  background-image: url('/public/welcome-illustration.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: var(--white-color);
   flex: 1;
   padding: 60px 40px;
@@ -116,6 +120,24 @@ nav a:not(.active):hover {
   justify-content: center;
   align-items: flex-start;
   text-align: left;
+  position: relative;
+}
+
+.auth-welcome-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.auth-welcome-section h2,
+.auth-welcome-section p {
+  position: relative;
+  z-index: 2;
 }
 
 .auth-welcome-section h2 {
@@ -134,13 +156,9 @@ nav a:not(.active):hover {
 }
 
 .welcome-illustration-split {
-  max-width: 100%;
-  height: auto;
-  margin-bottom: 20px;
-  border-radius: 10px;
+  display: none;
 }
 
-/* Cột phải: Form */
 .auth-form-section {
   flex: 1.2;
   background-color: var(--white-color);
@@ -159,7 +177,7 @@ nav a:not(.active):hover {
   color: var(--text-dark);
 }
 
-/* --- Card Styles (GIỮ LẠI cho các trang khác như Trang chủ) --- */
+/* --- Card Styles --- */
 .auth-card {
   background-color: #EBF5FF;
   border-radius: 16px;
@@ -179,7 +197,7 @@ nav a:not(.active):hover {
   font-size: 1.8rem;
 }
 
-/* --- Form Styles (SỬA ĐỔI để nổi bật hơn) --- */
+/* --- Form Styles --- */
 .auth-form {
   display: flex;
   flex-direction: column;
@@ -220,23 +238,21 @@ nav a:not(.active):hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
 }
+
 .home-container {
-  /* Sử dụng grid để chia 2 cột */
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Chia 50/50 */
-  align-items: center; /* Căn giữa theo chiều dọc */
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
   gap: 40px;
-  
-  /* Tăng chiều rộng tối đa cho trang chủ */
-  max-width: 900px; 
+  max-width: 900px;
 }
 
 .home-text {
-  text-align: left; /* Căn trái chữ cho đẹp */
+  text-align: left;
 }
 
 .home-text h2 {
-  font-size: 2.5rem; /* Chữ to hơn */
+  font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 20px;
   color: var(--text-dark);
@@ -249,7 +265,6 @@ nav a:not(.active):hover {
   margin-bottom: 30px;
 }
 
-/* Nút kêu gọi hành động (ví dụ) */
 .home-cta-button {
   padding: 14px 28px;
   border: none;
@@ -261,7 +276,7 @@ nav a:not(.active):hover {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
-  text-decoration: none; /* Dùng cho thẻ Link */
+  text-decoration: none;
 }
 
 .home-cta-button:hover {
@@ -275,7 +290,8 @@ nav a:not(.active):hover {
   height: auto;
   border-radius: 12px;
 }
-/* --- (MỚI) Tùy chọn Form (Checkbox & Quên mật khẩu) --- */
+
+/* --- Form Options --- */
 .form-options {
   display: flex;
   justify-content: space-between;
@@ -333,7 +349,6 @@ nav a:not(.active):hover {
   display: block;
 }
 
-/* --- (SỬA ĐỔI) Link "Quên mật khẩu" --- */
 .forgot-password-link {
   text-align: right;
   margin: 0;
@@ -349,7 +364,6 @@ nav a:not(.active):hover {
   text-decoration: underline;
 }
 
-/* --- (SỬA ĐỔI) Link "Đăng ký ngay" --- */
 .register-link {
   margin-top: 30px;
   font-size: 1rem;
@@ -368,7 +382,7 @@ nav a:not(.active):hover {
   text-decoration: underline;
 }
 
-/* --- Khung thông báo và JWT (GIỮ NGUYÊN) --- */
+/* --- Message Box --- */
 .message-box {
   margin-top: 20px;
   padding: 15px;
@@ -430,98 +444,159 @@ nav a:not(.active):hover {
   color: #c63737;
 }
 
-/* --- CSS cho Trang Admin (GIỮ NGUYÊN) --- */
+/* ======================================= */
+/* CSS CHO TRANG ADMIN - FIXED & MODERN */
+/* ======================================= */
+
 .admin-container {
   width: 100%;
-  max-width: 1100px;
-  margin: 20px auto;
-  padding: 30px;
-  background-color: #EBF5FF;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 40px;
+  background: linear-gradient(145deg, #ffffff 0%, #f8fbff 100%);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
+
 .admin-container h2 {
   text-align: center;
   margin-top: 0;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   color: var(--text-dark);
+  font-size: 2rem;
+  font-weight: 700;
+  position: relative;
+  padding-bottom: 10px;
 }
 
-.users-table {
+.admin-container h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-blue), var(--success-green));
+  border-radius: 2px;
+}
+
+/* FIXED: Table với khoảng cách hợp lý */
+.admin-table {
   width: 100%;
-  border-collapse: collapse;
-  border-radius: 8px;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 12px;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  background-color: var(--white-color);
 }
 
-.users-table th,
-.users-table td {
-  padding: 16px 20px;
+.admin-table th,
+.admin-table td {
+  padding: 14px 20px;
   text-align: left;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid #e8ecf3;
+  vertical-align: middle;
 }
 
-.users-table th {
+.admin-table th {
   color: var(--text-dark);
   font-weight: 700;
-  background-color: #eaf1f9;
-  font-size: 0.9rem;
+  background: linear-gradient(135deg, #f0f5fa 0%, #e6ecf5 100%);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.admin-table td {
+  font-weight: 500;
+  color: var(--text-dark);
+  font-size: 0.95rem;
+}
+
+.admin-table tbody tr {
+  background-color: var(--white-color);
+  transition: all 0.3s ease;
+}
+
+.admin-table tbody tr:nth-child(even) {
+  background-color: #fafbfd;
+}
+
+.admin-table tbody tr:hover {
+  background-color: #f0f6fd;
+  transform: scale(1.01);
+  box-shadow: 0 4px 12px rgba(74, 144, 226, 0.1);
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* FIXED: Role Badge - Tăng padding và spacing */
+.role-badge {
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--white-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  min-width: 75px;
+  text-align: center;
+}
+
+.role-badge.admin {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+}
+
+.role-badge.user {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+}
+
+.role-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* MODERN: Delete Button */
+.btn-delete {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  color: var(--white-color);
+  border: none;
+  padding: 6px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.80rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.users-table td {
-  font-weight: 500;
-  color: var(--text-dark);
-}
-
-.users-table tbody tr:nth-child(even) {
-  background-color: var(--background-light);
-}
-
-.users-table tr:last-child td {
-  border-bottom: none;
-}
-
-.users-table tbody tr:hover {
-  background-color: #e9eff8;
-}
-
-.role-badge {
-  padding: 5px 14px;
-  border-radius: 16px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  text-transform: capitalize;
-  color: var(--white-color);
-}
-
-.role-badge.admin {
-  background-color: var(--success-green);
-}
-
-.role-badge.user {
-  background-color: var(--primary-blue);
-}
-
-.btn-delete {
-  background-color: var(--danger-red);
-  color: var(--white-color);
-  border: none;
-  padding: 9px 18px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
 .btn-delete:hover {
-  background-color: #c0392b;
+  background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(231, 76, 60, 0.4);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
 }
 
-/* --- CSS CHO TRANG PROFILE (GIỮ NGUYÊN) --- */
+.btn-delete:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
+}
+
+/* MODERN: Action Column */
+.admin-table td:last-child {
+  text-align: center;
+}
+
+/* --- CSS CHO TRANG PROFILE --- */
 .profile-container {
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -604,73 +679,59 @@ nav a:not(.active):hover {
   width: 100%;
 }
 
-/* --- Cột trái: Welcome Section --- */
-.auth-welcome-section {
-  /* THÊM: Sử dụng ảnh làm nền */
-  background-image: url('/public/welcome-illustration.png'); /* 👈 Đổi đường dẫn này */
-  background-size: cover; /* Đảm bảo ảnh nền phủ kín */
-  background-position: center; /* Căn giữa ảnh nền */
-  background-repeat: no-repeat; /* Không lặp lại ảnh nền */
-  
-  color: var(--white-color); /* Giữ màu chữ trắng để đọc được trên ảnh */
-  flex: 1;
-  padding: 60px 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  text-align: left;
-  position: relative; /* Quan trọng: để tạo lớp phủ màu nếu cần */
-}
-
-/* (TÙY CHỌN): Thêm một lớp phủ màu đen mờ để chữ dễ đọc hơn */
-.auth-welcome-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.3); /* Màu đen mờ 30% */
-  z-index: 1; /* Đảm bảo lớp phủ nằm dưới chữ */
-}
-
-.auth-welcome-section h2, 
-.auth-welcome-section p {
-  position: relative; /* Đặt chữ nằm trên lớp phủ */
-  z-index: 2; /* Đảm bảo chữ nằm trên lớp phủ */
-}
-
-/* XÓA: Nếu bạn không muốn ảnh minh họa riêng biệt trong JS nữa */
-.welcome-illustration-split {
-  display: none; /* Ẩn ảnh này nếu đã dùng background-image */
-}
-
-
-/* --- Responsive (Điều chỉnh cho màn hình nhỏ) --- */
+/* --- Responsive --- */
 @media (max-width: 900px) {
   .auth-welcome-section {
-    /* Khi responsive, bạn có thể muốn ảnh nền nhỏ hơn hoặc ẩn đi */
-    background-size: contain; /* Hoặc ẩn hoàn toàn nếu muốn */
-    background-position: center bottom; /* Căn ảnh xuống dưới */
-    min-height: 200px; /* Đảm bảo có chiều cao tối thiểu */
-    justify-content: flex-end; /* Đẩy chữ xuống dưới */
+    background-size: contain;
+    background-position: center bottom;
+    min-height: 200px;
+    justify-content: flex-end;
   }
 
-  /* Ẩn ảnh minh họa và mô tả trên di động để tiết kiệm không gian */
   .auth-welcome-section p,
-  .welcome-illustration-split { /* Đảm bảo class này cũng bị ẩn */
+  .welcome-illustration-split {
     display: none;
   }
-  
-  /* Nếu ẩn ảnh, có thể đổi lại background màu */
+
   .auth-welcome-section::before {
-    background-color: var(--primary-blue); /* Hoặc màu solid */
+    background-color: var(--primary-blue);
   }
 
   .auth-welcome-section h2 {
     font-size: 2rem;
     text-align: center;
-    width: 100%; /* Đảm bảo h2 chiếm đủ chiều rộng để căn giữa */
+    width: 100%;
+  }
+
+  .admin-container {
+    padding: 20px;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+  }
+
+  .role-badge {
+    padding: 6px 16px;
+    font-size: 0.75rem;
+    min-width: 70px;
+  }
+
+  .btn-delete {
+    padding: 8px 16px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-table {
+    font-size: 0.85rem;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 10px 12px;
   }
 }

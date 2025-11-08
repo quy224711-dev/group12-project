@@ -18,7 +18,7 @@ function RegisterPage() {
     setIsLoading(true);
     setMessage({ text: '', type: '' });
     try {
-      const response = await axios.post('http://localhost:5000/api/signup', formData);
+     const response = await axios.post('http://localhost:5000/api/auth/signup', formData);
 
       // --- (THAY ĐỔI) ---
       // XÓA: setMessage({ text: '✔ Đăng ký thành công! Đang chuyển đến trang đăng nhập...', type: 'success' });

@@ -1,3 +1,5 @@
+
+import api from './api';
 import React from 'react';
 import { BrowserRouter, Routes, Route, NavLink, useNavigate, Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
@@ -11,6 +13,8 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminProtectedRoute from './components/AdminProtectedRoute';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutSuccess, selectCurrentUser } from './redux/authSlice';
 import './App.css';
 
 
@@ -44,38 +48,37 @@ function HomePage() {
 }
 
 
-// Lấy role từ token
-const getRoleFromToken = () => {
-  const token = localStorage.getItem('authToken');
-  if (!token) return null;
-  try {
-    return jwtDecode(token).role;
-  } catch (error) {
-    return null;
-  }
-};
-
 // Cập nhật Navigation
 function Navigation() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const token = localStorage.getItem('authToken');
-  const userRole = getRoleFromToken();
-
-  const handleLogout = () => {
-    localStorage.removeItem('authToken');
+  const user = useSelector(selectCurrentUser);
+  
+  const handleLogout = async () => {
+    try {
+      // Sửa 2: Thêm 2 dòng này ĐỂ GỌI API LOGOUT
+      // Dòng này báo cho backend xóa RefreshToken khỏi DB
+      await api.post('/auth/logout', { 
+        refreshToken: localStorage.getItem('refreshToken') 
+      });
+    } catch (err) {
+      console.error("Lỗi khi gọi API logout:", err);
+    }
+    
+    // Dùng Redux để dọn kho (luôn luôn chạy)
+    dispatch(logoutSuccess()); 
     navigate('/login');
-    window.location.reload(); 
   };
 
   return (
     <nav>
       <NavLink to="/" className="logo-link">Trang chủ</NavLink>
       <div className="nav-links">
-        {token ? (
+        {user ? (
           <>
             <NavLink to="/profile">Hồ sơ</NavLink>
             
-            {userRole === 'admin' && (
+            {user && user.role === 'admin' && (
               <NavLink to="/admin">Quản lý</NavLink>
             )}
 
