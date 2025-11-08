@@ -28,7 +28,11 @@ function ResetPasswordPage() {
       // 2. Gửi mật khẩu mới và token lên API (cũng dùng axios gốc)
       await axios.post(
         `http://localhost:5000/api/reset-password/${token}`,
+<<<<<<< HEAD
         { NewPassword: formData.password }
+=======
+        { password: formData.password }
+>>>>>>> main
       );
 
       setMessage({ text: '✔ Đổi mật khẩu thành công! Đang chuyển về trang đăng nhập...', type: 'success' });
