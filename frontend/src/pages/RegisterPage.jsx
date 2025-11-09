@@ -18,7 +18,7 @@ function RegisterPage() {
     setIsLoading(true);
     setMessage({ text: '', type: '' });
     try {
-     const response = await axios.post(`${API_BASE_URL}/auth/signup`, formData);
+      await axios.post(`${API_BASE_URL}/auth/signup`, formData);
 
       
       navigate('/login');

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../api'; 
 
 function ProfilePage() {
-  const [profile, setProfile] = useState(null);
+  
   const [formData, setFormData] = useState({ name: '', email: '' });
   const [message, setMessage] = useState({ text: '', type: '' });
   const [isLoading, setIsLoading] = useState(true);
@@ -17,7 +17,6 @@ function ProfilePage() {
     const fetchProfile = async () => {
       try {
         const response = await api.get('/profile');
-        setProfile(response.data);
         setFormData({
           name: response.data.name,
           email: response.data.email,
@@ -42,7 +41,7 @@ function ProfilePage() {
     e.preventDefault();
     try {
       const response = await api.put('/profile', formData);
-      setProfile(response.data);
+      
       if(response.data.avatar) {
       setAvatarPreview(response.data.avatar);
       }
@@ -117,7 +116,7 @@ function ProfilePage() {
         <h2>Ảnh đại diện</h2>
         <img 
           src={avatarPreview || 'https://via.placeholder.com/200'}
-          
+          alt="Ảnh đại diện"
           className="avatar-preview"
         />
         <form onSubmit={handleAvatarUpload}>
