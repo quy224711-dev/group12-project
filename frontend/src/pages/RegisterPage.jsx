@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 function RegisterPage() {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [message, setMessage] = useState({ text: '', type: '' });
@@ -18,16 +18,11 @@ function RegisterPage() {
     setIsLoading(true);
     setMessage({ text: '', type: '' });
     try {
-     const response = await axios.post('http://localhost:5000/api/auth/signup', formData);
+     const response = await axios.post(`${API_BASE_URL}/auth/signup`, formData);
 
-      // --- (THAY ĐỔI) ---
-      // XÓA: setMessage({ text: '✔ Đăng ký thành công! Đang chuyển đến trang đăng nhập...', type: 'success' });
-      // XÓA: setTimeout(...)
-
-      // THÊM: Chuyển hướng ngay lập tức
+      
       navigate('/login');
-      // --------------------
-
+     
     } catch (error) {
       const errorMsg = error.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại.';
       setMessage({ text: '✖ ' + errorMsg, type: 'error' });

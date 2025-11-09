@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 function ResetPasswordPage() {
   const [formData, setFormData] = useState({ password: '', confirmPassword: '' });
   const [message, setMessage] = useState({ text: '', type: '' });
@@ -26,10 +26,10 @@ function ResetPasswordPage() {
     setIsLoading(true);
     try {
       // 2. Gửi mật khẩu mới và token lên API (cũng dùng axios gốc)
-      await axios.post(
-        `http://localhost:5000/api/reset-password/${token}`,
-        { NewPassword: formData.password }
-      );
+    await axios.post(
+      `${API_BASE_URL}/reset-password/${token}`, 
+        { newPassword: formData.password } 
+       );
 
       setMessage({ text: '✔ Đổi mật khẩu thành công! Đang chuyển về trang đăng nhập...', type: 'success' });
       

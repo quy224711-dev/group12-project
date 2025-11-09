@@ -14,14 +14,14 @@ function LoginPage() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage({ text: '', type: '' });
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', formData);
+     const response = await axios.post(`${API_BASE_URL}/auth/login`, formData); 
       
       // ✅ Lấy đủ 3 thông tin
       const { accessToken, refreshToken, user } = response.data;
